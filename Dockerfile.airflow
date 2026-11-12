@@ -1,0 +1,19 @@
+FROM apache/airflow:2.8.4
+
+USER root
+
+RUN apt-get update && apt-get install -y openjdk-17-jre-headless
+
+USER airflow
+
+RUN pip install --no-cache-dir \
+    pandas \
+    pyarrow \
+    "psycopg[binary]" \
+    faker \
+    python-dotenv \
+    dbt-core==1.8.2 \
+    dbt-postgres==1.8.2 \
+    boto3 \
+    pyspark==3.5.0 \
+    confluent-kafka

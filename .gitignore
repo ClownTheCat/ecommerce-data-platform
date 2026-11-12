@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Data
+data/
+logs/
+dbt/target/
+dbt/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+# dbt secrets
+dbt/profiles.yml
+dbt/.user.yml
+
+# junk
+airflow-docker/
+scripts/test.py

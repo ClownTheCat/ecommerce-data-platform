@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef2f5;
+            margin: 0;
+            padding: 30px;
+        }
+        .header { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Первый график шире, второй уже */
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h3 { text-align: center; color: #34495e; margin-top: 0; }
+        
+        /* На мобилках графики будут друг под другом */
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="header">📊 E-commerce Data Platform</h1>
+    
+    <div class="dashboard-grid">
+        <!-- Первая карточка: Выручка -->
+        <div class="card">
+            <h3>📈 Выручка магазина по дням</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <!-- Вторая карточка: События -->
+        <div class="card">
+            <h3>🖱️ Действия пользователей</h3>
+            <canvas id="eventsChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // --- ГРАФИК 1: ВЫРУЧКА (Линейный) ---
+        fetch('http://localhost:8000/api/sales')
+            .then(response => response.json())
+            .then(data => {
+                const dates = data.map(item => item.date);
+                const revenues = data.map(item => item.revenue);
+
+                new Chart(document.getElementById('salesChart'), {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Выручка (₽)',
+                            data: revenues,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+
+        // --- ГРАФИК 2: СОБЫТИЯ (Круговой) ---
+        fetch('http://localhost:8000/api/events')
+            .then(response => response.json())
+            .then(data => {
+                const eventTypes = data.map(item => item.event_type);
+                const eventCounts = data.map(item => item.event_count);
+
+                new Chart(document.getElementById('eventsChart'), {
+                    type: 'doughnut', // Круговая диаграмма
+                    data: {
+                        labels: eventTypes,
+                        datasets: [{
+                            data: eventCounts,
+                            backgroundColor: [
+                                '#2ecc71', // Зеленый
+                                '#e74c3c', // Красный
+                                '#f1c40f', // Желтый
+                                '#9b59b6'  // Фиолетовый
+                            ]
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+    </script>
+</body>
+</html>
